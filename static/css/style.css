@@ -1,0 +1,300 @@
+/* 🌐 Structure globale */
+body {
+  font-family: Arial, sans-serif;
+  background: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.chat-container {
+  background: white;
+  border: 2px solid #050505;
+  width: 1200px;
+  max-width: 90%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 800px;
+  text-align: center;
+}
+
+.chat-container {
+  border: 3px solid #4f4f4f;
+  box-shadow: 0 0 10px #4f4f4f;
+}
+
+/* 🗨️ Zone de conversation */
+.chat-messages {
+  flex: 1;
+  padding: 25px;
+  overflow-y: auto;
+  background: #e9ecef;
+  border: 2px solid #0f0f0f;
+  border-radius: 8px;
+  margin: 10px 15px;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #999;
+  border-radius: 10px;
+}
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 🧠 En-tête */
+.chat-header {
+  background: #141414;
+  color: white;
+  padding: 25px;
+  font-size: 1.2em;
+  border-radius: 5px 5px 0 0;
+}
+
+/* 💬 Messages */
+.message {
+  margin-bottom: 25px;
+  max-width: 70%;
+  padding: 20px 25px;
+  border-radius: 25px;
+  clear: both;
+  word-wrap: break-word;
+  animation: fadeIn 0.4s ease-in;
+  will-change: transform, opacity;
+  transition: transform 0.2s;
+}
+
+.message:hover {
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  transform: scale(1.01);
+}
+
+.message.user {
+  background: #0a0a0a;
+  color: white;
+  float: right;
+  border-bottom-right-radius: 0;
+}
+
+.message.bot {
+  background: #dee2e6;
+  color: black;
+  float: left;
+  border-bottom-left-radius: 0;
+}
+
+/* ⌨️ Zone d'entrée */
+.chat-input {
+  display: flex;
+  border-top: 2px solid #0e0d0d;
+  padding: 20px 35px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 15px;
+  border: 2px solid #050505;
+  border-radius: 20px 0 0 20px;
+  font-size: 1em;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.chat-input input:focus {
+  border-color: #4f4f4f;
+  box-shadow: 0 0 4px #4f4f4f;
+}
+
+.chat-input button {
+  background: #161616;
+  border: none;
+  color: white;
+  padding: 0 20px;
+  cursor: pointer;
+  font-size: 1em;
+  border-radius: 0 10px 10px 0;
+  transition: background 0.3s;
+}
+
+.chat-input button:hover {
+  background: #0d0d0e;
+}
+
+/* 🧹 Signature */
+#footer {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  font-size: 1.1em;
+  color: #666;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 3px 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.1);
+}
+
+/* ⏳ Spinner animé */
+.spinner::after {
+  content: ' ';
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid #999;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ✨ Animation d'apparition */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 🌙 Mode sombre */
+body.dark {
+  background: #121212;
+}
+
+body.dark .chat-container {
+  background: #1e1e1e;
+  color: white;
+  border-color: #333;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 10px #ffffff;
+}
+
+body.dark .chat-messages {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+body.dark .chat-input input {
+  background: #2e2e2e;
+  color: white;
+  border-color: #555;
+}
+
+body.dark .chat-input input:focus {
+  border-color: #ffffff;
+  box-shadow: 0 0 4px #ffffff;
+}
+
+body.dark .chat-input button {
+  background: #444;
+}
+
+body.dark .message.user {
+  background: #333;
+}
+
+body.dark .message.bot {
+  background: #444;
+  color: #ddd;
+}
+
+/* 🌗 Bouton mode sombre */
+#darkModeToggle {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 999;
+  transition: transform 0.2s;
+}
+
+#darkModeToggle:hover {
+  transform: scale(1.2);
+}
+
+/* 📱 Responsive mobile */
+@media (max-width: 768px) {
+  .chat-container {
+    height: 100vh;
+    width: 100%;
+    border-radius: 0;
+    border: none;
+  }
+
+  .chat-input {
+    flex-direction: column;
+    padding: 15px;
+  }
+
+  .chat-input input {
+    border-radius: 20px;
+    margin-bottom: 10px;
+    border-right: none;
+  }
+
+  .chat-input button {
+    border-radius: 20px;
+    width: 100%;
+  }
+
+  #section {
+    font-size: 0.9em;
+    bottom: 10px;
+    right: 10px;
+  }
+
+  #darkModeToggle {
+    font-size: 1.5rem;
+    top: 10px;
+    right: 10px;
+  }
+
+}
+
+  /* Lien dans les messages du chatbot */
+.message.bot a {
+  color: #1a73e8;           /* bleu Google */
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.message.bot a:hover {
+  color: #0b57d0;           /* bleu plus foncé au survol */
+  text-decoration: none;
+}
+
+.message.math {
+    background-color: #f0fff4;
+    border-left: 4px solid #38a169;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: "Cambria Math", serif;
+}
+
+pre {
+    background: #1e1e1e;
+    color: #f8f8f2;
+    padding: 1em;
+    border-radius: 8px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    font-family: Consolas, monospace;
+    margin: 1em 0;
+}
+code {
+    font-family: inherit;
+}
+
