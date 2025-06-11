@@ -1,42 +1,55 @@
 import os
 import torch
 from pathlib import Path
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
 
 from utils.wikipedia_search import recherche_wikipedia
 from utils.google_search import recherche_google
 from app.config import WIKI_TRIGGER, GOOGLE_TRIGGER
 
-# === Chargement du modèle fine-tuné GPT-2 ===
+from entrainement.model import MiniGPT
+from tokenizers import ByteLevelBPETokenizer
+
+# Chargement tokenizer et modèle MiniGPT
+tokenizer = ByteLevelBPETokenizer("tokenizer/vocab.json", "tokenizer/merges.txt")
+VOCAB_SIZE = tokenizer.get_vocab_size()
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model = MiniGPT(VOCAB_SIZE, block_size=64).to(device)
+
+model_path = "entrainement/model-output/minigpt.pth"
+if Path(model_path).exists():
+    model.load_state_dict(torch.load(model_path, map_location=device))
+    print(f"Modèle chargé depuis {model_path}")
+else:
+    print(f"Attention : modèle non trouvé à {model_path}")
+
+model.eval()
+
 try:
-    model_path = Path(__file__).resolve().parent.parent / "model-output"
-    if not model_path.exists():
-        raise FileNotFoundError(f"Le dossier du modèle n'existe pas : {model_path}")
+    eos_token_id = tokenizer.token_to_id("</s>")
+except KeyError:
+    eos_token_id = None
 
-    tokenizer = GPT2Tokenizer.from_pretrained(model_path.as_posix(), local_files_only=True)
-    model = GPT2LMHeadModel.from_pretrained(model_path.as_posix(), local_files_only=True)
+def generate_with_miniGPT(prompt: str, max_length=100) -> str:
     model.eval()
+    input_ids = tokenizer.encode(prompt).ids
+    generated = input_ids.copy()
 
-except Exception as e:
-    raise RuntimeError(f"Erreur lors du chargement du modèle GPT-2 fine-tuné :\n{e}")
-
-# === Génération de réponse GPT-2 ===
-def generate_gpt2_response(prompt: str) -> str:
-    input_ids = tokenizer.encode(prompt, return_tensors="pt")
     with torch.no_grad():
-        output = model.generate(
-            input_ids,
-            max_new_tokens=100,
-            do_sample=True,
-            top_k=50,
-            top_p=0.95,
-            temperature=0.9,
-            pad_token_id=tokenizer.eos_token_id
-        )
-    response = tokenizer.decode(output[0], skip_special_tokens=True)
-    return response[len(prompt):].strip()
+        for _ in range(max_length):
+            x = torch.tensor([generated[-64:]], device=device)
+            logits = model(x)
+            probs = torch.softmax(logits[0, -1], dim=-1)
+            next_token = torch.multinomial(probs, num_samples=1).item()
+            generated.append(next_token)
+            if eos_token_id is not None and next_token == eos_token_id:
+                break
 
-# === Fonction principale appelée par Flask ===
+    output = tokenizer.decode(generated)
+    # Retourner uniquement la réponse générée (après le prompt)
+    return output[len(prompt):].strip()
+
+
 def obtenir_la_response(message: str) -> str:
     msg = message.strip()
     if not msg:
@@ -64,7 +77,20 @@ def obtenir_la_response(message: str) -> str:
         except Exception as e:
             return f"Erreur Google : {e}"
 
-    # Génération via GPT-2
+    # Génération via ta propre IA MiniGPT
     prompt = f"Utilisateur : {msg}\nAssistant :"
-    gpt2_output = generate_gpt2_response(prompt)
-    return gpt2_output
+    try:
+        response = generate_with_miniGPT(prompt)
+        return response.strip()
+    except Exception as e:
+        return f"Erreur génération IA : {e}"
+
+
+
+if __name__ == "__main__":
+    print("MiniGPT test interactif. Tape 'exit' ou 'quit' pour quitter.")
+    while True:
+        user_input = input("Utilisateur > ")
+        if user_input.lower() in ("quit", "exit"):
+            break
+        print("Assistant >", generate_with_miniGPT(f"Utilisateur : {user_input}\nAssistant :"))

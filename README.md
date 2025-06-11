@@ -1,34 +1,35 @@
 mon_projet/
 │
-├── app/
+├── app/                      # Application Flask
 │   ├── __init__.py
-│   ├── app.py               # Flask app (point d'entrée)
-│   ├── config.py            # Contient la clé MISTRAL_API_KEY, et d'autres configs
-│   └── memory.py            # Gère le cache ou mémoire de session
+│   ├── app.py                # Point d'entrée Flask
+│   ├── config.py             # Configs (ex: WIKI_TRIGGER, GOOGLE_TRIGGER)
+│   └── memory.py             # Gestion mémoire/session utilisateur
 │
-├── utils/
+├── utils/                    # Fonctions utilitaires
 │   ├── __init__.py
-│   ├── google_search.py
-│   ├── wikipedia_search.py
-│   ├── Calcul_Maths.py      # Ton module de résolution mathématique
-│   ├── Mistral_API.py       # ✅ Contient la requête POST à l'API Mistral
-│   └── monchatbot.py        # ✅ Cœur logique : routing, détection, prompts, etc.
+│   ├── google_search.py      # Recherche Google
+│   ├── wikipedia_search.py   # Recherche Wikipédia
+│   └── monchatbot.py         # Chargement et génération avec MiniGPT
 │
-├── templates/
-│   └── index.html           # Interface utilisateur HTML (Flask Jinja2)
+├── templates/                # Templates HTML (Flask/Jinja2)
+│   └── index.html            # Interface utilisateur
 │
-├── static/
+├── static/                   # Fichiers statiques frontend
 │   ├── css/
-│   │   └── style.css        # Ton design (mode sombre, bulles, etc.)
+│   │   └── style.css
 │   └── js/
-│       └── main.js          # JS client : envoi des messages, affichage, LaTeX, etc.
+│       └── main.js           # JS côté client (messages, affichage, etc.)
 │
-├── data/
-│   └── mon_corpus.txt       # ✅ Ton jeu de données d'entraînement personnalisé
+├── data/                     # Données pour entraînement / corpus
+│   ├── mon_corpus.txt        # Corpus brut initial
+│   └── corpus_formate.txt    # Corpus formaté dialogues (Utilisateur/Assistant)
 │
-├── entrainement/ 
-│   ├── finetune.py          # ✅ Script pour entraîner GPT2 ou TinyLlama avec HuggingFace
-│   └── model-output/        # Répertoire de sortie du modèle fine-tuné
+├── entrainement/             # Scripts liés à l’entraînement du modèle
+│   ├── finetune.py           # Script d’entraînement MiniGPT (finetuning)
+│   ├── model.py              # Définition MiniGPT (architecture)
+│   ├── tokenizer_train.py    # Script pour entraîner le tokenizer BPE
+│   └── convertir_corpus.py   # Script pour formater corpus en dialogues
 │
-├── .env                     # Variables sensibles : MISTRAL_API_KEY, etc.
-└── README.md                # Documentation du projet
+├── .env                      # Variables d’environnement (optionnel)
+└── README.md                 # Documentation projet
