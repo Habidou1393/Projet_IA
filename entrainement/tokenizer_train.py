@@ -3,7 +3,7 @@ from tokenizers import ByteLevelBPETokenizer
 
 def train_tokenizer():
     tokenizer = ByteLevelBPETokenizer()
-    tokenizer.train(files=["data/mon_corpus.txt"], vocab_size=5000, min_frequency=2)
+    tokenizer.train(files=["data/corpus_formate.txt"], vocab_size=5000, min_frequency=2)
 
     save_dir = "tokenizer"
     if not os.path.exists(save_dir):

@@ -23,13 +23,16 @@ mon_projet/
 │
 ├── data/                     # Données pour entraînement / corpus
 │   ├── mon_corpus.txt        # Corpus brut initial
-│   └── corpus_formate.txt    # Corpus formaté dialogues (Utilisateur/Assistant)
+│   ├── corpus_formate.txt    # Corpus formaté dialogues (Utilisateur/Assistant)
+│   └── frwiki-latest-pages-articles.xml.bz2  # Dump brut Wikipédia
+│   └── frwiki_extrait/       # Texte extrait JSON via wikiextractor
 │
 ├── entrainement/             # Scripts liés à l’entraînement du modèle
+│   ├── convertir_corpus.py   # Script pour formater corpus en dialogues
+│   ├── tokenizer_train.py    # Script pour entraîner le tokenizer BPE
 │   ├── finetune.py           # Script d’entraînement MiniGPT (finetuning)
 │   ├── model.py              # Définition MiniGPT (architecture)
-│   ├── tokenizer_train.py    # Script pour entraîner le tokenizer BPE
-│   └── convertir_corpus.py   # Script pour formater corpus en dialogues
+│   └── utils_training.py     # (Nouveau) Fonctions communes entraînement
 │
 ├── .env                      # Variables d’environnement (optionnel)
 └── README.md                 # Documentation projet
