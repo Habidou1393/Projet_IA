@@ -1,50 +1,41 @@
-# mon_projet
-
-## Structure du projet
-
-```
-mon_projet/
-│
-├── app/                      # Application Flask
+Projet_IA/
+│ 
+├── app/
 │   ├── __init__.py
-│   ├── app.py                # Point d'entrée Flask
-│   ├── config.py             # Configurations (ex: WIKI_TRIGGER, GOOGLE_TRIGGER)
+│   ├── app.py                # Application Flask (backend)
+│   ├── config.py             # Configuration (triggers, clés API)
 │   ├── memory.py             # Gestion mémoire/session utilisateur
 │   └── __pycache__/
-│
-├── data/                     # Données pour entraînement / corpus
-│   ├── corpus_formate.txt    # Corpus formaté dialogues (Utilisateur/Assistant)
-│
-├── entrainement/             # Scripts liés à l’entraînement du modèle
-│   ├── finetune.py           # Script d’entraînement MiniGPT (finetuning)
-│   ├── model.py              # Définition MiniGPT (architecture)
-│   ├── tokenizer_train.py    # Script pour entraîner le tokenizer BPE
-│   ├── utils_training.py     # Fonctions communes entraînement
-│   └── __pycache__/
-│   └── model-output/         # Sorties de modèles entraînés
-│
-├── tokenizer/                # Tokenizer BPE
-│   ├── merges.txt
-│   └── vocab.json
-│
-├── utils/                    # Fonctions utilitaires
+│ 
+├── data/
+│   └── corpus_formate.txt    # Corpus formaté pour l'entraînement
+│ 
+├── entrainement/
+│   ├── build_corpus.py       # Construction du corpus à partir de sources externes
+│   ├── entrainement_complet.py # Entraînement complet d'un modèle GPT
+│   ├── model.py              # Définition du modèle MiniGPT
+│   ├── tokenizer_train.py    # Entraînement du tokenizer BPE
+│   ├── utils_training.py     # Fonctions utilitaires pour l'entraînement
+│ 
+├── static/
+│   ├── css/
+│   │   └── style.css         # Styles de l'interface web
+│   └── js/
+│       └── main.js           # Logique frontend du chat
+│ 
+├── templates/
+│   └── index.html            # Interface utilisateur (HTML)
+│ 
+├── utils/
 │   ├── __init__.py
 │   ├── google_search.py      # Recherche Google
+│   ├── mon_extractor.py      # Extraction d'articles Wikipédia bruts
+│   ├── monchatbot.py         # Logique du chatbot (MiniGPT + recherche)
 │   ├── wikipedia_search.py   # Recherche Wikipédia
-│   ├── mon_extractor.py
-│   └── monchatbot.py         # Chargement et génération avec MiniGPT
 │   └── __pycache__/
-│
-├── templates/                # Templates HTML (Flask/Jinja2)
-│   └── index.html            # Interface utilisateur
-│
-├── static/                   # Fichiers statiques frontend
-│   ├── css/
-│   └── js/
-│
-├── convertisseur.py          # Script de conversion (fonction inconnue)
-├── Nettoyage.py              # Script de nettoyage (fonction inconnue)
-├── .env                      # Variables d’environnement (optionnel)
+│ 
+├── convertisseur.py          # Conversion JSON -> texte pour corpus Wikipédia
+├── Nettoyage.py              # Nettoyage de texte Wikipédia
+├── .env                      # Variables d'environnement (API keys, etc.)
 ├── .gitignore
-└── README.md                 # Documentation projet
-```
+└── README.md
