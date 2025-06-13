@@ -1,15 +1,13 @@
 import os
 import torch
 from pathlib import Path
-
 from utils.wikipedia_search import recherche_wikipedia
 from utils.google_search import recherche_google
 from app.config import WIKI_TRIGGER, GOOGLE_TRIGGER
-
 from entrainement.model import MiniGPT
 from tokenizers import ByteLevelBPETokenizer
 
-# Chargement tokenizer et modèle MiniGPT
+# --- Chargement tokenizer et modèle MiniGPT ---
 tokenizer = ByteLevelBPETokenizer("tokenizer/vocab.json", "tokenizer/merges.txt")
 VOCAB_SIZE = tokenizer.get_vocab_size()
 
@@ -30,13 +28,17 @@ try:
 except KeyError:
     eos_token_id = None
 
+
 def generate_with_miniGPT(prompt: str, max_length=100) -> str:
-    model.eval()
+    """
+    Génère une réponse à partir du prompt avec MiniGPT.
+    """
     input_ids = tokenizer.encode(prompt).ids
     generated = input_ids.copy()
 
     with torch.no_grad():
         for _ in range(max_length):
+            # On tronque à la taille max supportée par le modèle
             x = torch.tensor([generated[-64:]], device=device)
             logits = model(x)
             probs = torch.softmax(logits[0, -1], dim=-1)
@@ -46,8 +48,29 @@ def generate_with_miniGPT(prompt: str, max_length=100) -> str:
                 break
 
     output = tokenizer.decode(generated)
-    # Retourner uniquement la réponse générée (après le prompt)
-    return output[len(prompt):].strip()
+    # Retourner uniquement la partie générée, sans le prompt
+    if output.startswith(prompt):
+        return output[len(prompt):].strip()
+    return output.strip()
+
+
+def traiter_recherche(trigger: str, query: str) -> str:
+    """
+    Effectue la recherche Wikipédia ou Google selon le trigger.
+    """
+    if not query:
+        return f"Tu dois préciser ce que tu veux chercher avec '{trigger}'."
+    try:
+        if trigger == WIKI_TRIGGER:
+            res = recherche_wikipedia(query)
+            return f"Résultat Wikipédia :\n{res}" if res else "Aucune information trouvée sur Wikipédia."
+        elif trigger == GOOGLE_TRIGGER:
+            res = recherche_google(query)
+            return f"Résultat Google :\n{res}" if res else "Aucune information trouvée via Google."
+        else:
+            return "Trigger de recherche inconnu."
+    except Exception as e:
+        return f"Erreur lors de la recherche {trigger}: {e}"
 
 
 def obtenir_la_response(message: str) -> str:
@@ -58,39 +81,36 @@ def obtenir_la_response(message: str) -> str:
     # Recherche Wikipédia
     if msg.lower().startswith(WIKI_TRIGGER):
         query = msg[len(WIKI_TRIGGER):].strip()
-        if not query:
-            return "Tu dois préciser ce que tu veux chercher sur Wikipédia."
-        try:
-            res = recherche_wikipedia(query)
-            return f"Résultat Wikipédia :\n{res}" if res else "Aucune information trouvée sur Wikipédia."
-        except Exception as e:
-            return f"Erreur Wikipédia : {e}"
+        return traiter_recherche(WIKI_TRIGGER, query)
 
     # Recherche Google
     if msg.lower().startswith(GOOGLE_TRIGGER):
         query = msg[len(GOOGLE_TRIGGER):].strip()
-        if not query:
-            return "Tu dois préciser ce que tu veux chercher sur Google."
-        try:
-            res = recherche_google(query)
-            return f"Résultat Google :\n{res}" if res else "Aucune information trouvée via Google."
-        except Exception as e:
-            return f"Erreur Google : {e}"
+        return traiter_recherche(GOOGLE_TRIGGER, query)
 
-    # Génération via ta propre IA MiniGPT
+    # Génération MiniGPT
     prompt = f"Utilisateur : {msg}\nAssistant :"
     try:
         response = generate_with_miniGPT(prompt)
-        return response.strip()
+        # Nettoyer le output pour enlever un éventuel "Utilisateur :" ou "Assistant :" restants
+        for marker in ["Utilisateur :", "Assistant :"]:
+            response = response.replace(marker, "").strip()
+        return response
     except Exception as e:
         return f"Erreur génération IA : {e}"
-
 
 
 if __name__ == "__main__":
     print("MiniGPT test interactif. Tape 'exit' ou 'quit' pour quitter.")
     while True:
-        user_input = input("Utilisateur > ")
+        try:
+            user_input = input("Utilisateur > ")
+        except (EOFError, KeyboardInterrupt):
+            print("\nFin du programme.")
+            break
+
         if user_input.lower() in ("quit", "exit"):
             break
-        print("Assistant >", generate_with_miniGPT(f"Utilisateur : {user_input}\nAssistant :"))
+
+        response = obtenir_la_response(user_input)
+        print("Assistant >", response)
