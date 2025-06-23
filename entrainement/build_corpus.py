@@ -18,9 +18,6 @@ def build_corpus():
         "https://www.gutenberg.org/cache/epub/17489/pg17489.txt",  # Les Misérables - Victor Hugo
         "https://www.gutenberg.org/cache/epub/24234/pg24234.txt",  # Le Comte de Monte-Cristo - Alexandre Dumas
 
-        # Articles Wikipédia en français (extraits)
-        "https://fr.wikipedia.org/wiki/Fichier:Wikipédia_française_article_texte.txt",  # Exemple (remplacer par vrai fichier)
-
         # Textes variés public domain (extraits)
         "https://www.gutenberg.org/cache/epub/5200/pg5200.txt",  # Les Fables de La Fontaine
 

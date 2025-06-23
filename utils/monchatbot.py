@@ -1,4 +1,3 @@
-import os
 import torch
 from pathlib import Path
 from utils.wikipedia_search import recherche_wikipedia

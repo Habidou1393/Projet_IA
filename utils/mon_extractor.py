@@ -1,5 +1,3 @@
-# utils/mon_extractor.py
-
 import os
 import bz2
 import re
